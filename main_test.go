@@ -20,14 +20,3 @@ func TestHandleFile(t *testing.T) {
 		t.Errorf("Response code is %v", writer.Code)
 	}
 }
-
-func TestHandleGet(t *testing.T) {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/somefile", downloadFile)
-	writer := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/somefile", nil)
-	mux.ServeHTTP(writer, request)
-	if writer.Code != 200 {
-		t.Errorf("Response code is %v", writer.Code)
-	}
-}
