@@ -16,3 +16,6 @@ idea
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+ts.go
+ts_test.go
+httpserver

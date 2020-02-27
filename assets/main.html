@@ -6,12 +6,36 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Download files</h1>
-    <pre>
-        <a href="doc.pdf">pdf  ------<a href="/original/doc.pdf?download">download</a></a>
-        <a href="new.jpg">image  ------<a href="/original/new.jpg">download</a></a>
-        <a href="chief-keef-love-sosa.mp3">mp3 ------<a href="/original/chief-keef-love-sosa.mp3?download">download </a></a>
-        <a href="index.webm">video ------<a href="/original/index.webm?download">download</a></a>
-    </pre>
+    <header style="width: 100%; height: 100px; background-color: aquamarine; padding-top: 16px; margin: 0px;">
+        <h1 class="title">Download files</h1>
+    </header>
+    <ul>
+        <li><a href="./assets/doc">PDF         <a href="./assets/doc.pdf?download">download</a></a></li>
+        <li><a href="./assets/image.jpg">IMAGE.JPG  <a href="./assets/image.jpg?download">download</a></a></li>
+        <li><a href="./assets/image.png">IMAGE.PNG  <a href="./assets/image.png?download">download</a></a></li>
+        <li><a href="./assets/music">MP3 <a href="./assets/miyaGi.mp3?download">download </a></a></li>
+        <li><a href="./assets/video">VIDEO <a href="./assets/index.webm?download">download</a></a></li>
+        <li><a href="./assets/text">TEXT <a href="./assets/myfile.txt?download">download</a></a></li>
+    </ul>
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+            background-color: azure;
+        }
+        .title {
+            padding-left:3%;
+        }
+
+        li {
+            list-style: none;
+            background-color: #f1a5d9;
+            margin: 10px;
+        }
+
+        a {
+            color: black!important;
+        }
+    </style>
 </body>
 </html>
