@@ -8,11 +8,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"os"
 	"strings"
 )
 
 func main() {
-	listener, err := net.Listen("tcp", "0.0.0.0:9898")
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "9898"
+	}
+	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
 		log.Fatalf("Servet can't started error: %v", err)
 	}
