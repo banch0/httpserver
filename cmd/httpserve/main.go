@@ -72,7 +72,7 @@ func requestHandler(conn net.Conn) {
 
 		switch {
 		case method == "GET" && request == "/" && protocol == "HTTP/1.1":
-			data, err := ioutil.ReadFile("../../assets/main.html")
+			data, err := ioutil.ReadFile("./assets/main.html")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -81,7 +81,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/doc":
-			data, err := ioutil.ReadFile("../../assets/doc.pdf")
+			data, err := ioutil.ReadFile("./assets/doc.pdf")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -90,7 +90,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/doc.pdf?download":
-			data, err := ioutil.ReadFile("../../assets/doc.pdf")
+			data, err := ioutil.ReadFile("./assets/doc.pdf")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -100,7 +100,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/image.jpg":
-			data, err := ioutil.ReadFile("../../assets/image.jpg")
+			data, err := ioutil.ReadFile("./assets/image.jpg")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -110,7 +110,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/image.jpg?download":
-			data, err := ioutil.ReadFile("../../assets/image.jpg")
+			data, err := ioutil.ReadFile("./assets/image.jpg")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -120,7 +120,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/music":
-			data, err := ioutil.ReadFile("../../assets/miyaGi.mp3")
+			data, err := ioutil.ReadFile("./assets/miyaGi.mp3")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -129,7 +129,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/miyaGi.mp3?download":
-			data, err := ioutil.ReadFile("../../assets/miyaGi.mp3")
+			data, err := ioutil.ReadFile("./assets/miyaGi.mp3")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -139,7 +139,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/video":
-			data, err := ioutil.ReadFile("../../assets/index.webm")
+			data, err := ioutil.ReadFile("./assets/index.webm")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -148,7 +148,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/index.webm?download":
-			data, err := ioutil.ReadFile("../../assets/index.webm")
+			data, err := ioutil.ReadFile("./assets/index.webm")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -158,7 +158,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/image.png":
-			data, err := ioutil.ReadFile("../../assets/biohazard.png")
+			data, err := ioutil.ReadFile("./assets/biohazard.png")
 			if err != nil {
 				log.Println("ReadFile Error: ", err)
 			}
@@ -167,7 +167,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/image.png?download":
-			data, err := ioutil.ReadFile("../../assets/biohazard.png")
+			data, err := ioutil.ReadFile("./assets/biohazard.png")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -177,7 +177,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/text":
-			data, err := ioutil.ReadFile("../../assets/myfile.txt")
+			data, err := ioutil.ReadFile("./assets/myfile.txt")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -186,7 +186,7 @@ func requestHandler(conn net.Conn) {
 				log.Println(err)
 			}
 		case method == "GET" && request == "/assets/myfile.txt?download":
-			data, err := ioutil.ReadFile("../../assets/myfile.txt")
+			data, err := ioutil.ReadFile("./assets/myfile.txt")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
@@ -201,7 +201,7 @@ func requestHandler(conn net.Conn) {
 			writer.Flush()
 			log.Println("favicon")
 		default:
-			data, err := ioutil.ReadFile("../../assets/404.html")
+			data, err := ioutil.ReadFile("./assets/404.html")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
