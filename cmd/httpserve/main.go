@@ -12,12 +12,28 @@ import (
 	"strings"
 )
 
+var assets = "./assets/"
+var address = "0.0.0.0"
+
+var extensions = map[string]string{
+	".jpg":  "image/jpeg",
+	".jpeg": "image/jpeg",
+	".html": "text/html; charset=utf-8",
+	".txt":  "text/plain",
+	".css":  "text/css; charset=utf-8",
+	".pdf":  "application/pdf",
+	".png":  "image/png",
+	".webm": "video/webm",
+	".mp3":  "audio/mpeg",
+	".ico":  "image/x-icon",
+}
+
 func main() {
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
 		port = "9898"
 	}
-	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
+	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		log.Fatalf("Servet can't started error: %v", err)
 	}
@@ -36,10 +52,10 @@ func main() {
 func requestHandler(conn net.Conn) {
 	defer conn.Close()
 
-	var parts []string
-	headers := make(map[string]string)
 	reader := bufio.NewReader(conn)
 	writer := bufio.NewWriter(conn)
+	headers := make(map[string]string)
+	parts := make([]string, 0)
 
 	for {
 		readLine, err := reader.ReadSlice('\n')
@@ -70,159 +86,76 @@ func requestHandler(conn net.Conn) {
 		method, request, protocol := parts[0], parts[1], parts[2]
 		var response = bytes.Buffer{}
 
+		if protocol != "HTTP/1.1" {
+			return // errors.New("Wrong protocol")
+		}
+
+		if method != "GET" {
+			return // errors.New("Method Not Allowed")
+		}
+
 		switch {
-		case method == "GET" && request == "/" && protocol == "HTTP/1.1":
-			data, err := ioutil.ReadFile("./assets/main.html")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-			err = sendResponse(response, writer, data, "text/html")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/doc":
-			data, err := ioutil.ReadFile("./assets/doc.pdf")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-			err = sendResponse(response, writer, data, "application/pdf")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/doc.pdf?download":
-			data, err := ioutil.ReadFile("./assets/doc.pdf")
+		case strings.HasPrefix(request, "/assets/"):
+
+			filename, extension, download := handler(request)
+
+			data, err := ioutil.ReadFile(assets + filename)
 			if err != nil {
 				log.Println("Error read file", err)
 			}
 
-			err = downloadFile(response, writer, data, "application/pdf")
+			err = Response(response, writer, data, download, extension)
 			if err != nil {
-				log.Println(err)
+				log.Println("Send Response Error: ", err)
 			}
-		case method == "GET" && request == "/assets/image.jpg":
-			data, err := ioutil.ReadFile("./assets/image.jpg")
+
+		case request == "/":
+			data, err := ioutil.ReadFile(assets + "main.html")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
 
-			err = sendResponse(response, writer, data, "image/jpg")
+			err = Response(response, writer, data, false, "text/html")
 			if err != nil {
 				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/image.jpg?download":
-			data, err := ioutil.ReadFile("./assets/image.jpg")
-			if err != nil {
-				log.Println("Error read file", err)
 			}
 
-			err = downloadFile(response, writer, data, "image/jpg")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/music":
-			data, err := ioutil.ReadFile("./assets/miyaGi.mp3")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-			err = sendResponse(response, writer, data, "audio/mpeg")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/miyaGi.mp3?download":
-			data, err := ioutil.ReadFile("./assets/miyaGi.mp3")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-
-			err = downloadFile(response, writer, data, "audio/mpeg")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/video":
-			data, err := ioutil.ReadFile("./assets/index.webm")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-			err = sendResponse(response, writer, data, "video/webm")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/index.webm?download":
-			data, err := ioutil.ReadFile("./assets/index.webm")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-
-			err = downloadFile(response, writer, data, "video/webm")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/image.png":
-			data, err := ioutil.ReadFile("./assets/biohazard.png")
-			if err != nil {
-				log.Println("ReadFile Error: ", err)
-			}
-			err = sendResponse(response, writer, data, "image/jpg")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/image.png?download":
-			data, err := ioutil.ReadFile("./assets/biohazard.png")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-
-			err = downloadFile(response, writer, data, "image/png")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/text":
-			data, err := ioutil.ReadFile("./assets/myfile.txt")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-			err = sendResponse(response, writer, data, "text/plain")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/assets/myfile.txt?download":
-			data, err := ioutil.ReadFile("./assets/myfile.txt")
-			if err != nil {
-				log.Println("Error read file", err)
-			}
-
-			err = downloadFile(response, writer, data, "text/plain")
-			if err != nil {
-				log.Println(err)
-			}
-		case method == "GET" && request == "/favicon.ico":
+		case request == "/favicon.ico":
 			writer.WriteString("HTTP/1.1 200 OK\r\n")
 			writer.WriteString("\r\n")
 			writer.Flush()
-			log.Println("favicon")
+
 		default:
-			data, err := ioutil.ReadFile("./assets/404.html")
+			data, err := ioutil.ReadFile(assets + "404.htm")
 			if err != nil {
 				log.Println("Error read file", err)
 			}
 
-			err = sendResponse(response, writer, data, "text/html")
+			err = Response(response, writer, data, false, "text/html")
 			if err != nil {
 				log.Println(err)
 			}
 		}
 	}
-
-	for key, value := range headers {
-		log.Printf("key: %s value: %s", key, value)
-	}
 }
 
-func sendResponse(resp bytes.Buffer, writer *bufio.Writer, data []byte, content string) error {
+// Response ...
+func Response(resp bytes.Buffer,
+	writer *bufio.Writer,
+	data []byte,
+	flag bool,
+	contentType string) error {
 	resp.WriteString("HTTP/1.1 200 OK\r\n")
 	resp.WriteString(fmt.Sprintf("Content-Length: %d\r\n", len(data)))
-	resp.WriteString("Connection: Close\r\n")
-	resp.WriteString("Content-Type: " + content + "\r\n")
+
+	if flag {
+		resp.WriteString("Content-Type: application/octet-stream\r\n")
+		resp.WriteString("Content-Transfer-Encoding: binary\r\n")
+	} else {
+		resp.WriteString("Connection: Close\r\n")
+		resp.WriteString("Content-Type: " + contentType + "\r\n")
+	}
+	
 	resp.WriteString("\r\n")
 	resp.Write(data)
 	resp.WriteTo(writer)
@@ -231,19 +164,19 @@ func sendResponse(resp bytes.Buffer, writer *bufio.Writer, data []byte, content 
 		log.Printf("Writing response error: %v", err)
 	}
 	return err
+
 }
 
-func downloadFile(resp bytes.Buffer, writer *bufio.Writer, data []byte, content string) error {
-	resp.WriteString("HTTP/1.1 200 OK\r\n")
-	resp.WriteString(fmt.Sprintf("Content-Length: %d\r\n", len(data)))
-	resp.WriteString("Content-Type: application/octet-stream\r\n")
-	resp.WriteString("Content-Transfer-Encoding: binary\r\n")
-	resp.WriteString("\r\n")
-	resp.Write(data)
-	resp.WriteTo(writer)
-	err := writer.Flush()
-	if err != nil {
-		log.Printf("Writing response error: %v", err)
+func handler(request string) (string, string, bool) {
+	var download bool
+
+	if strings.Contains(request, "?download") {
+		download = true
+		request = strings.TrimSuffix(request, "?download")
 	}
-	return err
+
+	fileName := strings.TrimPrefix(request, "/assets/")
+	extension := strings.Split(fileName, ".")
+
+	return fileName, extensions["."+extension[1]], download
 }
