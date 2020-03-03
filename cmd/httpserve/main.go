@@ -87,11 +87,11 @@ func requestHandler(conn net.Conn) {
 		var response = bytes.Buffer{}
 
 		if protocol != "HTTP/1.1" {
-			return // errors.New("Wrong protocol")
+			return
 		}
 
 		if method != "GET" {
-			return // errors.New("Method Not Allowed")
+			return
 		}
 
 		switch {
@@ -155,10 +155,11 @@ func Response(resp bytes.Buffer,
 		resp.WriteString("Connection: Close\r\n")
 		resp.WriteString("Content-Type: " + contentType + "\r\n")
 	}
-	
+
 	resp.WriteString("\r\n")
 	resp.Write(data)
 	resp.WriteTo(writer)
+
 	err := writer.Flush()
 	if err != nil {
 		log.Printf("Writing response error: %v", err)
